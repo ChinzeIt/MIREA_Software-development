@@ -1,0 +1,7 @@
+# Ignore IDEA config
+./qtcreator
+./vscode
+
+# Ignore build directory
+**/.build/
+**/.bin/

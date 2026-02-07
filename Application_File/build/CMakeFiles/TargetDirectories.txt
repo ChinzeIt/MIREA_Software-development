@@ -1,0 +1,5 @@
+/home/chinze/MIREA_Software-development/Application_File/build/CMakeFiles/AppFile.dir
+/home/chinze/MIREA_Software-development/Application_File/build/CMakeFiles/edit_cache.dir
+/home/chinze/MIREA_Software-development/Application_File/build/CMakeFiles/rebuild_cache.dir
+/home/chinze/MIREA_Software-development/Application_File/build/CMakeFiles/AppFile_autogen_timestamp_deps.dir
+/home/chinze/MIREA_Software-development/Application_File/build/CMakeFiles/AppFile_autogen.dir
