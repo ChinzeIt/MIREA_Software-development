@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QShortcut>
 
 class DiskInfoWindow: public QWidget {
     Q_OBJECT
@@ -16,6 +17,7 @@ class DiskInfoWindow: public QWidget {
     private:
     void setUpUI();
     void setUpConnections();
+    void setHotKey();
 
     QPushButton* backButton;
 };
