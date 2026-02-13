@@ -1,10 +1,13 @@
 #pragma once
 
+#include "../adapter/qt/qtDiskService.h"
+
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QShortcut>
 #include <QTextEdit>
+#include <QString>
 #include <QDebug>
 
 class DiskInfoWindow: public QWidget {
@@ -20,6 +23,7 @@ class DiskInfoWindow: public QWidget {
     void setUpUI();
     void setUpConnections();
     void setHotKey();
+    void loadInformation();
 
     void onBackButton();
     void onUButton();
@@ -27,4 +31,6 @@ class DiskInfoWindow: public QWidget {
     QTextEdit* textInfo;
     QPushButton* backButton;
     QPushButton* uButton;
+
+    QTDiskService information;
 };

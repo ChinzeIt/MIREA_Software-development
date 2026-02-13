@@ -25,7 +25,7 @@ void DiskInfoWindow::setUpUI () {
     textInfo->setReadOnly(true);
     textInfo->setFont(fontText);
 
-    textInfo->setText("...");
+    loadInformation();
 
     uButton = new QPushButton("↻", this);
     backButton = new QPushButton("BACK", this);
@@ -63,11 +63,17 @@ void DiskInfoWindow::setHotKey () {
 }
 
 void DiskInfoWindow::onUButton () {
-    // here button wich update info
+    loadInformation();
     qDebug() << "u button clicked";
 }
 
 void DiskInfoWindow::onBackButton () {
     emit backToMain();
     qDebug() << "back button clicked";
+}
+
+void DiskInfoWindow::loadInformation () {
+    information.setDisk();
+    information.setInfoLine();
+    textInfo->setText(QString::fromStdString(information.getInfoLine()));
 }
