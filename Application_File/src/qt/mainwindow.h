@@ -38,9 +38,14 @@ class MainWindow: public QMainWindow {
     QStackedWidget* stackedWidget;
     QWidget* mainWidget;
     DiskInfoWindow* diskInfoWindow;
+
     TXTWindow* txtWindow;
+    TXTWindowRead* txtWindowRead;
+
     JSONWindow* jsonWindow;
+
     XMLWindow* xmlWindow;
+
     ZIPWindow* zipWindow;
 
     QPushButton* diskButton;

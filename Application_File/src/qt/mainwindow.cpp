@@ -64,6 +64,10 @@ void MainWindow::setUpUI () {
     stackedWidget->addWidget(xmlWindow); // 4
     stackedWidget->addWidget(zipWindow); // 5
 
+    // Window TXT
+    txtWindowRead = new TXTWindowRead(this);
+    stackedWidget->addWidget(txtWindowRead); // 6
+
     stackedWidget->setCurrentIndex(0);
 }
 
@@ -75,23 +79,34 @@ void MainWindow::setUpConnections () {
     connect(zipButton, &QPushButton::clicked, this, &MainWindow::onZIPButtonClicked);
 
     // Connect for back main window
-    connect(diskInfoWindow, &DiskInfoWindow::backToMain, this, [this]() {
+    connect(diskInfoWindow, &DiskInfoWindow::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 
-    connect(txtWindow, &TXTWindow::backToMain, this, [this]() {
+    connect(txtWindow, &TXTWindow::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 
-    connect(jsonWindow, &JSONWindow::backToMain, this, [this]() {
+    connect(jsonWindow, &JSONWindow::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 
-    connect(xmlWindow, &XMLWindow::backToMain, this, [this]() {
+    connect(xmlWindow, &XMLWindow::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 
-    connect(zipWindow, &ZIPWindow::backToMain, this, [this]() {
+    connect(zipWindow, &ZIPWindow::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+
+    // Connect txt lower widget
+    connect(txtWindow, &TXTWindow::readTXT, this, [this]() {
+        stackedWidget->setCurrentIndex(6);
+    });
+    connect(txtWindowRead, &TXTWindowRead::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(2);
+    });
+    connect(txtWindowRead, &TXTWindowRead::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 }

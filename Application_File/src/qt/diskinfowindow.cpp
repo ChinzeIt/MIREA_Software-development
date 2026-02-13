@@ -49,7 +49,7 @@ void DiskInfoWindow::setUpUI () {
 }
 
 void DiskInfoWindow::setUpConnections () {
-    connect(backButton, &QPushButton::clicked, this, &DiskInfoWindow::onUButton);
+    connect(uButton, &QPushButton::clicked, this, &DiskInfoWindow::onUButton);
     connect(backButton, &QPushButton::clicked, this, &DiskInfoWindow::onBackButton);
 }
 
