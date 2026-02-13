@@ -4,7 +4,9 @@ project(Application_File)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(SOURCES src/main.cpp src/mainwindow.cpp src/diskinfowindow.cpp src/txtwindow.cpp src/jsonwindow.cpp src/xmlwindow.cpp src/zipwindow.cpp)
+set(QT_SOURCES src/qt/mainwindow.cpp src/qt/diskinfowindow.cpp src/qt/txtwindow.cpp src/qt/jsonwindow.cpp src/qt/xmlwindow.cpp src/qt/zipwindow.cpp)
+
+set(SOURCES src/main.cpp ${QT_SOURCES})
 
 set(CMAKE_AUTOMOC ON)
 

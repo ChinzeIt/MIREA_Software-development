@@ -97,23 +97,23 @@ void MainWindow::setUpConnections () {
 }
 
 void MainWindow::setHotKey () {
-    new QShortcut(QKeySequence(Qt::Key_1), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_1), mainWidget, [this]() {
         onDISKButtonClicked();
     });
 
-    new QShortcut(QKeySequence(Qt::Key_2), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_2), mainWidget, [this]() {
         onTXTButtonClicked();
     });
 
-    new QShortcut(QKeySequence(Qt::Key_3), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_3), mainWidget, [this]() {
         onJSONButtonClicked();
     });
 
-    new QShortcut(QKeySequence(Qt::Key_4), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_4), mainWidget, [this]() {
         onXMLButtonClicked();
     });
 
-    new QShortcut(QKeySequence(Qt::Key_5), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_5), mainWidget, [this]() {
         onZIPButtonClicked();
     });
 } 
