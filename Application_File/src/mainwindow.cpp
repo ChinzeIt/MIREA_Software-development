@@ -28,7 +28,7 @@ void MainWindow::setUpUI () {
     font.setPointSize(30);
     font.setBold(true);
 
-    diskButton = new QPushButton("DISK INFO", mainWidget);
+    diskButton = new QPushButton("DISK info", mainWidget);
     txtButton = new QPushButton("TXT files", mainWidget);
     jsonButton = new QPushButton("JSON files", mainWidget);
     xmlButton = new QPushButton("XML files", mainWidget);

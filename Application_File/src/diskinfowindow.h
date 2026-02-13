@@ -4,6 +4,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QShortcut>
+#include <QTextEdit>
+#include <QDebug>
 
 class DiskInfoWindow: public QWidget {
     Q_OBJECT
@@ -19,5 +21,10 @@ class DiskInfoWindow: public QWidget {
     void setUpConnections();
     void setHotKey();
 
+    void onBackButton();
+    void onUButton();
+
+    QTextEdit* textInfo;
     QPushButton* backButton;
+    QPushButton* uButton;
 };

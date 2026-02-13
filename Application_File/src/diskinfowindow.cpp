@@ -11,30 +11,63 @@ backButton(nullptr) {
 void DiskInfoWindow::setUpUI () {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
+    QFont fontText;
+    fontText.setFamily("Arial");
+    fontText.setPointSize(16);
+    fontText.setBold(true);
+
     QFont font;
     font.setFamily("Arial");
     font.setPointSize(30);
     font.setBold(true);
 
+    textInfo = new QTextEdit();
+    textInfo->setReadOnly(true);
+    textInfo->setFont(fontText);
+
+    textInfo->setText("...");
+
+    uButton = new QPushButton("↻", this);
     backButton = new QPushButton("BACK", this);
-
+    uButton->setFont(font);
     backButton->setFont(font);
-
+    uButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    uButton->setToolTip("Update text information about DISK");
 
-    mainLayout->addStretch();
-    
-    mainLayout->addWidget(backButton);
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(uButton);
+    buttonLayout->addWidget(backButton);
+    buttonLayout->setStretch(0, 1);
+    buttonLayout->setStretch(1, 4);
 
+    mainLayout->addWidget(textInfo);
+    mainLayout->addLayout(buttonLayout);
+    mainLayout->setStretch(0, 1);
+    mainLayout->setStretch(1, 0);
     mainLayout->setContentsMargins(20, 20, 20, 20);
 }
 
 void DiskInfoWindow::setUpConnections () {
-    connect(backButton, &QPushButton::clicked, this, &DiskInfoWindow::backToMain);
+    connect(backButton, &QPushButton::clicked, this, &DiskInfoWindow::onUButton);
+    connect(backButton, &QPushButton::clicked, this, &DiskInfoWindow::onBackButton);
 }
 
 void DiskInfoWindow::setHotKey () {
-    new QShortcut(QKeySequence(Qt::Key_Escape), this, [this]() {
-        emit backToMain();
+    new QShortcut(QKeySequence(Qt::Key_U), this, [this]() {
+        onUButton();
     });
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, [this]() {
+        onBackButton();
+    });
+}
+
+void DiskInfoWindow::onUButton () {
+    // here button wich update info
+    qDebug() << "u button clicked";
+}
+
+void DiskInfoWindow::onBackButton () {
+    emit backToMain();
+    qDebug() << "back button clicked";
 }
