@@ -7,36 +7,6 @@ QWidget(parent) {
     setHotKey();
 }
 
-void TXTWindowRead::showEvent(QShowEvent* event) {
-    QWidget::showEvent(event);
-
-    putPath->setEnabled(true);
-    pathButton->setEnabled(true);
-
-    putPath->clear();
-    putPath->show();
-
-    pathButton->show();
-
-    textInfo->clear();
-    textInfo->hide();
-
-    putPath->setFocus();
-}
-
-bool TXTWindowRead::eventFilter(QObject* obj, QEvent* event) {
-    if (obj == putPath && event->type() == QEvent::KeyPress) {
-        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-
-        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
-            putPath->clearFocus();
-            onPathButton();
-            return true;
-        }
-    }
-    return QWidget::eventFilter(obj, event);
-}
-
 void TXTWindow::setUpUI () {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
@@ -121,6 +91,38 @@ QWidget (parent) {
     setHotKey();
 }
 
+void TXTWindowRead::showEvent(QShowEvent* event) {
+    QWidget::showEvent(event);
+
+    putPath->setEnabled(true);
+    pathButton->setEnabled(true);
+
+    putPath->clear();
+    putPath->show();
+
+    pathButton->show();
+
+    pathError->hide();
+
+    textInfo->clear();
+    textInfo->hide();
+
+    putPath->setFocus();
+}
+
+bool TXTWindowRead::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == putPath && event->type() == QEvent::KeyPress) {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            putPath->clearFocus();
+            onPathButton();
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
 void TXTWindowRead::setUpUI() {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
@@ -152,11 +154,19 @@ void TXTWindowRead::setUpUI() {
     pathButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     pathButton->setFixedHeight(60);
 
+    pathError = new QLabel(this);
+    pathError->setStyleSheet("color: red;");
+    pathError->setWordWrap(true);
+
     QHBoxLayout* pathLayout = new QHBoxLayout();
     pathLayout->addWidget(putPath);
     pathLayout->addWidget(pathButton);
     pathLayout->setStretch(0, 3);
     pathLayout->setStretch(1, 1);
+
+    QVBoxLayout* pathLayoutWithError = new QVBoxLayout();
+    pathLayoutWithError->addLayout(pathLayout);
+    pathLayoutWithError->addWidget(pathError);
 
     textInfo = new QTextEdit();
     textInfo->setReadOnly(true);
@@ -174,8 +184,6 @@ void TXTWindowRead::setUpUI() {
     uButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     backUpButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    uButton->setToolTip("Update text information about DISK");
-    backUpButton->setToolTip("Back one step");
     uButton->setFixedHeight(60);
     backUpButton->setFixedHeight(60);
     backButton->setFixedHeight(60);
@@ -190,6 +198,7 @@ void TXTWindowRead::setUpUI() {
     buttonLayout->setStretch(2, 2);
 
     mainLayout->addLayout(pathLayout);
+    mainLayout->addLayout(pathLayoutWithError);
     mainLayout->addStretch(); 
     mainLayout->addWidget(textInfo);
     mainLayout->addLayout(buttonLayout);
@@ -218,19 +227,38 @@ void TXTWindowRead::setHotKey() {
     });
 }
 
-void TXTWindowRead::onPathButton() { // Подвезти core
-    putPath->setEnabled(false);
-    pathButton->setEnabled(false);
-    putPath->hide();
-    pathButton->hide();
+void TXTWindowRead::onPathButton() {
+    if (isValidPath()) {
+        putPath->setEnabled(false);
+        pathButton->setEnabled(false);
+        putPath->hide();
+        pathButton->hide();
+        pathError->hide();
 
-    loadInformation();
-    textInfo->show();
+        loadInformation();
+
+        textInfo->show();
+    } else {
+        pathError->show();
+
+        putPath->setFocus();
+        QTextCursor cursor = putPath->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        putPath->setTextCursor(cursor);
+    }
+
     qDebug() << "path button clicked";
 }
 
 void TXTWindowRead::onUButton() {
-    loadInformation();
+    if (putPath->isVisible() && putPath->isEnabled()) {
+        putPath->clear();
+        putPath->setFocus();
+        pathError->hide();
+    } else {
+        loadInformation();
+        textInfo->setText("World and life is beatiful!");
+    }
     qDebug() << "u button clicked";
 }
 
@@ -245,5 +273,21 @@ void TXTWindowRead::onBackButton() {
 }
 
 void TXTWindowRead::loadInformation() { // Подвезти core
+    textInfo->setText("Hello world!");
+}
 
+bool TXTWindowRead::isValidPath() {
+    QString pathStr = putPath->toPlainText();
+
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+
+    if (checkerPath.checking(pathStr.toStdString())) {
+        qDebug() << "no valid path";
+        return true;
+    } else {
+        pathError->setText(QString::fromStdString(checkerPath.error()));
+        qDebug() << "valid path";
+        return false;
+    }
 }

@@ -6,6 +6,9 @@
 #include <QVBoxLayout>
 #include <QShortcut>
 #include <QTextEdit>
+#include <QString>
+#include <QLabel>
+#include <QTextCursor>
 #include <QDebug>
 
 class TXTWindow: public QWidget {
@@ -36,6 +39,8 @@ class TXTWindow: public QWidget {
     QPushButton* backButton;
 };
 
+#include "../adapter/qt/qtCheckPathService.h"
+
 class TXTWindowRead: public QWidget {
     Q_OBJECT
 
@@ -60,6 +65,10 @@ class TXTWindowRead: public QWidget {
     void onBackUpButton();
     void onBackButton();
 
+    QTCheckPathService checkerPath;
+
+    bool isValidPath();
+    QLabel* pathError;
     void loadInformation();
 
     QTextEdit* putPath;
