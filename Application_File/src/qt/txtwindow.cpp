@@ -99,9 +99,186 @@ void TXTWindow::onBackButton() {
 // Create TXT
 TXTWindowCreate::TXTWindowCreate (QWidget* parent) :
 QWidget (parent) {
-    // setUpUI();
-    // setUpConnections();
-    // setHotKey();
+    setUpUI();
+    setUpConnections();
+    setHotKey();
+}
+
+void TXTWindowCreate::showEvent(QShowEvent* event) {
+    QWidget::showEvent(event);
+
+    putPath->setEnabled(true);
+    pathCreate->setEnabled(true);
+
+    putPath->clear();
+    putPath->show();
+
+    pathCreate->show();
+
+    pathError->hide();
+    pathOk->hide();
+
+    putPath->setFocus();
+}
+
+bool TXTWindowCreate::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == putPath && event->type() == QEvent::KeyPress) {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            putPath->clearFocus();
+            onCreateButton();
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
+void TXTWindowCreate::setUpUI() {
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+
+    QFont fontPath;
+    fontPath.setFamily("Arial");
+    fontPath.setPointSize(36);
+    fontPath.setBold(true);
+
+    QFont font;
+    font.setFamily("Arial");
+    font.setPointSize(30);
+    font.setBold(true);
+
+    putPath = new QTextEdit(this);
+    putPath->installEventFilter(this);
+    putPath->setFont(fontPath);
+    putPath->setPlaceholderText("Enter path");
+    putPath->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    putPath->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    putPath->setFixedHeight(60);
+
+    pathCreate = new QPushButton("↵", this);
+    pathCreate->setFont(fontPath);
+    pathCreate->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    pathCreate->setFixedHeight(60);
+
+    pathError = new QLabel(this);
+    pathError->setStyleSheet("color: red;");
+    pathError->setWordWrap(true);
+
+    pathOk = new QLabel(this);
+    pathOk->setStyleSheet("color: green;");
+    pathOk->setWordWrap(true);
+    pathOk->setText("File succes create");
+
+    QHBoxLayout* pathLayout = new QHBoxLayout();
+    pathLayout->addWidget(putPath);
+    pathLayout->addWidget(pathCreate);
+    pathLayout->setStretch(0, 3);
+    pathLayout->setStretch(1, 1);
+
+    QVBoxLayout* pathLayoutWithError = new QVBoxLayout();
+    pathLayoutWithError->addLayout(pathLayout);
+    pathLayoutWithError->addWidget(pathError);
+    pathLayoutWithError->addWidget(pathOk);
+
+    uButton = new QPushButton("↻", this);
+    backUpButton = new QPushButton("⬆", this);
+    backButton = new QPushButton("BACK", this);
+    uButton->setFont(font);
+    backUpButton->setFont(font);
+    backButton->setFont(font);
+    uButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    backUpButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    uButton->setFixedHeight(60);
+    backUpButton->setFixedHeight(60);
+    backButton->setFixedHeight(60);
+
+
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(uButton);
+    buttonLayout->addWidget(backUpButton);
+    buttonLayout->addWidget(backButton);
+    buttonLayout->setStretch(0, 1);
+    buttonLayout->setStretch(1, 1);
+    buttonLayout->setStretch(2, 2);
+
+    mainLayout->addLayout(pathLayoutWithError);
+    mainLayout->addStretch();
+    mainLayout->addLayout(buttonLayout);
+    mainLayout->setContentsMargins(20, 20, 20, 20);
+}
+
+void TXTWindowCreate::setUpConnections() {
+    connect(pathCreate, &QPushButton::clicked, this, &TXTWindowCreate::onCreateButton);
+    connect(uButton, &QPushButton::clicked, this, &TXTWindowCreate::onUButton);
+    connect(backUpButton, &QPushButton::clicked, this, &TXTWindowCreate::onBackUpButton);
+    connect(backButton, &QPushButton::clicked, this, &TXTWindowCreate::onBackButton);
+}
+
+void TXTWindowCreate::setHotKey() {
+    new QShortcut(QKeySequence(Qt::Key_Return), this, [this]() {
+        onCreateButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_U), this, [this]() {
+        onUButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_B), this, [this]() {
+        onBackUpButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, [this]() {
+        onBackButton();
+    });
+}
+
+void TXTWindowCreate::onCreateButton() {
+    if (isValidPath()) {
+        pathError->hide();
+        pathOk->show();
+    } else {
+        pathError->show();
+
+        putPath->setFocus();
+        QTextCursor cursor = putPath->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        putPath->setTextCursor(cursor);
+    }
+
+    qDebug() << "path button clicked";
+}
+
+void TXTWindowCreate::onUButton() {
+    putPath->clear();
+    putPath->setFocus();
+    pathError->hide();
+    pathOk->hide();
+
+    qDebug() << "u button clicked";
+}
+
+void TXTWindowCreate::onBackUpButton() {
+    emit backUp();
+    qDebug() << "back button clicked";
+}
+
+void TXTWindowCreate::onBackButton() {
+    emit backToMain();
+    qDebug() << "back button clicked";
+}
+
+bool TXTWindowCreate::isValidPath() { // Создать интерфейс проверки на возможность создания файла, с реализацией
+    QString pathStr = putPath->toPlainText();
+
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+
+    if (checkerPath.checking(pathStr.toStdString())) {
+        qDebug() << "valid path";
+        return true;
+    } else {
+        pathError->setText(QString::fromStdString(checkerPath.error()));
+        qDebug() << "no valid path";
+        return false;
+    }
 }
 
 // Read TXT
@@ -217,7 +394,7 @@ void TXTWindowRead::setUpUI() {
     buttonLayout->setStretch(0, 1);
     buttonLayout->setStretch(1, 1);
     buttonLayout->setStretch(2, 2);
-;
+
     mainLayout->addLayout(pathLayoutWithError);
     mainLayout->addStretch(); 
     mainLayout->addWidget(textInfo);
@@ -308,11 +485,11 @@ bool TXTWindowRead::isValidPath() {
         pathStr += ".txt";
 
     if (checkerPath.checking(pathStr.toStdString())) {
-        qDebug() << "no valid path";
+        qDebug() << "valid path";
         return true;
     } else {
         pathError->setText(QString::fromStdString(checkerPath.error()));
-        qDebug() << "valid path";
+        qDebug() << "no valid path";
         return false;
     }
 }

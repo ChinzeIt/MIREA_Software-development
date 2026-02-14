@@ -51,6 +51,10 @@ class TXTWindowCreate: public QWidget {
     public:
     TXTWindowCreate(QWidget* parent = nullptr);
 
+    protected:
+    void showEvent(QShowEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
+
     signals:
     void backUp();
     void backToMain();
@@ -59,6 +63,22 @@ class TXTWindowCreate: public QWidget {
     void setUpUI();
     void setUpConnections();
     void setHotKey();
+
+    void onCreateButton();
+    void onUButton();
+    void onBackUpButton();
+    void onBackButton();
+
+    QTCheckPathService checkerPath;
+    bool isValidPath();
+    QLabel* pathError;
+    QLabel* pathOk;
+
+    QTextEdit* putPath;
+    QPushButton* pathCreate;
+    QPushButton* uButton;
+    QPushButton* backUpButton;
+    QPushButton* backButton;
 };
 
 class TXTWindowRead: public QWidget {
