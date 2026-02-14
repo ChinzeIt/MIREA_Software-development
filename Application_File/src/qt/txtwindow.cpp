@@ -15,21 +15,25 @@ void TXTWindow::setUpUI () {
     font.setPointSize(30);
     font.setBold(true);
 
+    createButton = new QPushButton("Create TXT", this);
     readButton = new QPushButton("Read TXT", this);
     editButton = new QPushButton("Edit TXT", this);
     removeButton = new QPushButton("Remove TXT", this);
     backButton = new QPushButton("BACK", this);
 
+    createButton->setFont(font);
     readButton->setFont(font);
     editButton->setFont(font);
     removeButton->setFont(font);
     backButton->setFont(font);
 
+    createButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     readButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     editButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     removeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+    mainLayout->addWidget(createButton);
     mainLayout->addWidget(readButton);
     mainLayout->addWidget(editButton);
     mainLayout->addWidget(removeButton);
@@ -39,6 +43,7 @@ void TXTWindow::setUpUI () {
 }
 
 void TXTWindow::setUpConnections () {
+    connect(createButton, &QPushButton::clicked, this, &TXTWindow::onCreateButton);
     connect(readButton, &QPushButton::clicked, this, &TXTWindow::onReadButton);
     connect(editButton, &QPushButton::clicked, this, &TXTWindow::onEditButton);
     connect(removeButton, &QPushButton::clicked, this, &TXTWindow::onRemoveButton);
@@ -47,20 +52,28 @@ void TXTWindow::setUpConnections () {
 
 void TXTWindow::setHotKey() {
     new QShortcut(QKeySequence(Qt::Key_1), this, [this]() {
+        onCreateButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_2), this, [this]() {
         onReadButton();
     });
 
-    new QShortcut(QKeySequence(Qt::Key_2), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_3), this, [this]() {
         onEditButton();
     });
 
-    new QShortcut(QKeySequence(Qt::Key_3), this, [this]() {
+    new QShortcut(QKeySequence(Qt::Key_4), this, [this]() {
         onRemoveButton();
     });
 
     new QShortcut(QKeySequence(Qt::Key_Escape), this, [this]() {
         onBackButton();
     });
+}
+
+void TXTWindow::onCreateButton() {
+    emit createTXT();
+    qDebug() << "create txt";
 }
 
 void TXTWindow::onReadButton() {
@@ -81,6 +94,14 @@ void TXTWindow::onRemoveButton() {
 void TXTWindow::onBackButton() {
     emit backToMain();
     qDebug() << "back button press";
+}
+
+// Create TXT
+TXTWindowCreate::TXTWindowCreate (QWidget* parent) :
+QWidget (parent) {
+    // setUpUI();
+    // setUpConnections();
+    // setHotKey();
 }
 
 // Read TXT
@@ -196,8 +217,7 @@ void TXTWindowRead::setUpUI() {
     buttonLayout->setStretch(0, 1);
     buttonLayout->setStretch(1, 1);
     buttonLayout->setStretch(2, 2);
-
-    mainLayout->addLayout(pathLayout);
+;
     mainLayout->addLayout(pathLayoutWithError);
     mainLayout->addStretch(); 
     mainLayout->addWidget(textInfo);
@@ -257,7 +277,6 @@ void TXTWindowRead::onUButton() {
         pathError->hide();
     } else {
         loadInformation();
-        textInfo->setText("World and life is beatiful!");
     }
     qDebug() << "u button clicked";
 }
@@ -272,8 +291,14 @@ void TXTWindowRead::onBackButton() {
     qDebug() << "back button clicked";
 }
 
-void TXTWindowRead::loadInformation() { // Подвезти core
-    textInfo->setText("Hello world!");
+void TXTWindowRead::loadInformation() {
+    QString pathStr = putPath->toPlainText();
+
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+    
+    QString text = QString::fromStdString(readTXT.readFile(pathStr.toStdString()));
+    textInfo->setText(text);
 }
 
 bool TXTWindowRead::isValidPath() {

@@ -65,8 +65,10 @@ void MainWindow::setUpUI () {
     stackedWidget->addWidget(zipWindow); // 5
 
     // Window TXT
+    txtWindowCreate = new TXTWindowCreate(this);
     txtWindowRead = new TXTWindowRead(this);
-    stackedWidget->addWidget(txtWindowRead); // 6
+    stackedWidget->addWidget(txtWindowCreate); // 6
+    stackedWidget->addWidget(txtWindowRead); // 7
 
     stackedWidget->setCurrentIndex(0);
 }
@@ -100,8 +102,17 @@ void MainWindow::setUpConnections () {
     });
 
     // Connect txt lower widget
-    connect(txtWindow, &TXTWindow::readTXT, this, [this]() {
+    connect(txtWindow, &TXTWindow::createTXT, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(6);
+    });
+    connect(txtWindowCreate, &TXTWindowCreate::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(2);
+    });
+    connect(txtWindowCreate, &TXTWindowCreate::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(txtWindow, &TXTWindow::readTXT, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(7);
     });
     connect(txtWindowRead, &TXTWindowRead::backUp, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(2);

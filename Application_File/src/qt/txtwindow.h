@@ -18,6 +18,7 @@ class TXTWindow: public QWidget {
     TXTWindow(QWidget* parent = nullptr);
 
     signals:
+    void createTXT();
     void readTXT();
     void editTXT();
     void removeTXT();
@@ -28,11 +29,13 @@ class TXTWindow: public QWidget {
     void setUpConnections();
     void setHotKey();
 
+    void onCreateButton();
     void onReadButton();
     void onEditButton();
     void onRemoveButton();
     void onBackButton();
 
+    QPushButton* createButton;
     QPushButton* readButton;
     QPushButton* editButton;
     QPushButton* removeButton;
@@ -40,6 +43,23 @@ class TXTWindow: public QWidget {
 };
 
 #include "../adapter/qt/qtCheckPathService.h"
+#include "../adapter/qt/qtReadFileService.h"
+
+class TXTWindowCreate: public QWidget {
+    Q_OBJECT
+
+    public:
+    TXTWindowCreate(QWidget* parent = nullptr);
+
+    signals:
+    void backUp();
+    void backToMain();
+
+    private:
+    void setUpUI();
+    void setUpConnections();
+    void setHotKey();
+};
 
 class TXTWindowRead: public QWidget {
     Q_OBJECT
@@ -66,6 +86,7 @@ class TXTWindowRead: public QWidget {
     void onBackButton();
 
     QTCheckPathService checkerPath;
+    QTReadFileService readTXT;
 
     bool isValidPath();
     QLabel* pathError;

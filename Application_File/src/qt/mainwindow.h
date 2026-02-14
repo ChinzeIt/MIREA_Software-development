@@ -40,6 +40,7 @@ class MainWindow: public QMainWindow {
     DiskInfoWindow* diskInfoWindow;
 
     TXTWindow* txtWindow;
+    TXTWindowCreate* txtWindowCreate;
     TXTWindowRead* txtWindowRead;
 
     JSONWindow* jsonWindow;
