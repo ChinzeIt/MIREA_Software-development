@@ -8,7 +8,9 @@ set(CORE_SOURCE)
 
 set(QT_SOURCES src/qt/mainwindow.cpp src/qt/diskinfowindow.cpp src/qt/txtwindow.cpp src/qt/jsonwindow.cpp src/qt/xmlwindow.cpp src/qt/zipwindow.cpp)
 
-set(ADAPTER_SOURCE_QT src/adapter/qt/qtDiskService.cpp src/adapter/qt/qtCheckPathService.cpp src/adapter/qt/qtReadFileService.cpp)
+set(PATH_ADAPTER_QT src/adapter/qt)
+
+set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp ${PATH_ADAPTER_QT}/qtCheckCreateService.cpp ${PATH_ADAPTER_QT}/qtCheckPathService.cpp ${PATH_ADAPTER_QT}/qtCreateFileService.cpp ${PATH_ADAPTER_QT}/qtReadFileService.cpp)
 
 set(SOURCES src/main.cpp ${CORE_SOURCE} ${QT_SOURCES} ${ADAPTER_SOURCE_QT})
 

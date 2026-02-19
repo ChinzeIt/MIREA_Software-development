@@ -234,7 +234,15 @@ void TXTWindowCreate::onCreateButton() {
     if (isValidPath()) {
         pathError->hide();
         pathOk->show();
+
+        touchFile();
+
+        putPath->setFocus();
+        QTextCursor cursor = putPath->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        putPath->setTextCursor(cursor);
     } else {
+        pathOk->hide();
         pathError->show();
 
         putPath->setFocus();
@@ -249,6 +257,7 @@ void TXTWindowCreate::onCreateButton() {
 void TXTWindowCreate::onUButton() {
     putPath->clear();
     putPath->setFocus();
+    pathError->clear();
     pathError->hide();
     pathOk->hide();
 
@@ -265,11 +274,9 @@ void TXTWindowCreate::onBackButton() {
     qDebug() << "back button clicked";
 }
 
-bool TXTWindowCreate::isValidPath() { // Создать интерфейс проверки на возможность создания файла, с реализацией
-    QString pathStr = putPath->toPlainText();
-
-    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
-        pathStr += ".txt";
+bool TXTWindowCreate::isValidPath() {
+    pathError->clear();
+    QString pathStr = putPath->toPlainText();  
 
     if (checkerPath.checking(pathStr.toStdString())) {
         qDebug() << "valid path";
@@ -278,6 +285,19 @@ bool TXTWindowCreate::isValidPath() { // Создать интерфейс пр�
         pathError->setText(QString::fromStdString(checkerPath.error()));
         qDebug() << "no valid path";
         return false;
+    }
+}
+
+void TXTWindowCreate::touchFile() {
+    pathError->clear();
+    QString pathStr = putPath->toPlainText();
+
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+
+    if (!crFile.createFile(pathStr.toStdString())) {
+        pathError->setText("Dont touch file");
+        pathError->show();
     }
 }
 

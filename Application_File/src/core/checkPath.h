@@ -4,28 +4,27 @@
 #include <string_view>
 
 struct PathValidationResult {
-    bool empty;
-    bool exists;
-    bool isFile;
-    bool readable;
+    bool empty=true;
+    bool exists=true;
+    bool isFile=true;
+    bool readable=true;
 
-    bool hasExtension;
+    bool hasExtension=true;
 
-    bool canonicalizable;
-    bool absolute;
+    bool canonicalizable=true;
+    bool absolute=true;
 
-    bool insideWorkingDir;
-    bool parentDirExists;
-    bool hasTraversal;
+    bool insideWorkingDir=true;
+    bool parentDirExists=true;
+    bool hasTraversal=true;
 
-    bool userReadable;
-    bool userWritable;
+    bool userReadable=true;
 
-    bool isSymlink;
-    bool symlinkResolved;
+    bool isSymlink=true;
+    bool symlinkResolved=true;
 
     auto get_fields() {
-        return std::array<std::pair<std::string_view, bool*>, 14>{{
+        return std::array<std::pair<std::string_view, bool*>, 13>{{
             {"empty", &empty},
             {"exists", &exists},
             {"isFile", &isFile},
@@ -37,7 +36,6 @@ struct PathValidationResult {
             {"parentDirExists", &parentDirExists},
             {"hasTraversal", &hasTraversal},
             {"userReadable", &userReadable},
-            {"userWritable", &userWritable},
             {"isSymlink", &isSymlink},
             {"symlinkResolved", &symlinkResolved}
         }};

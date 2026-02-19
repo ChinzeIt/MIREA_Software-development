@@ -10,7 +10,7 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
     QString FrawPath = QString::fromStdString(rawPath);
 
     if (FrawPath.trimmed().isEmpty()) {
-        path.empty = true;
+        path.empty = false;
         return false;
     }
 
@@ -41,7 +41,6 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
     path.parentDirExists = parentDir.exists();
 
     path.userReadable = info.permission(QFile::ReadUser);
-    path.userWritable = info.permission(QFile::WriteUser);
 
     QDir cwd = QDir::current();
     QString absPath = info.absoluteFilePath();
@@ -54,13 +53,19 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
         absPath.startsWith(absCwd + QDir::separator());
 
 
-    return !path.empty &&
+    return path.empty &&
         path.exists &&
         path.isFile &&
         path.readable &&
+        path.hasExtension &&
         path.canonicalizable &&
+        path.absolute &&
+        path.insideWorkingDir &&
         path.parentDirExists &&
-        path.insideWorkingDir;
+        path.hasTraversal &&
+        path.userReadable &&
+        path.isSymlink &&
+        path.symlinkResolved;
 }
 
 std::string QTCheckPathService::error() {

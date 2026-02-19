@@ -42,6 +42,8 @@ class TXTWindow: public QWidget {
     QPushButton* backButton;
 };
 
+#include "../adapter/qt/qtCheckCreateService.h"
+#include "../adapter/qt/qtCreateFileService.h"
 #include "../adapter/qt/qtCheckPathService.h"
 #include "../adapter/qt/qtReadFileService.h"
 
@@ -69,8 +71,10 @@ class TXTWindowCreate: public QWidget {
     void onBackUpButton();
     void onBackButton();
 
-    QTCheckPathService checkerPath;
+    QTCheckCreateService checkerPath;
+    QTCreateFileService crFile;
     bool isValidPath();
+    void touchFile();
     QLabel* pathError;
     QLabel* pathOk;
 
