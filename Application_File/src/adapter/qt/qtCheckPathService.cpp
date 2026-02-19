@@ -23,7 +23,7 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
 
     path.hasExtension = !info.suffix().isEmpty();
 
-    path.absolute = info.isAbsolute();
+    path.absolute = !info.isAbsolute();
 
     QFileInfo canonicalInfo;
     if (info.exists()) {
@@ -31,10 +31,10 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
         path.canonicalizable = canonicalInfo.exists();
     }
 
-    path.isSymlink = info.isSymLink();
+    path.isSymlink = !info.isSymLink();
     if (path.isSymlink) {
         QFileInfo target(info.symLinkTarget());
-        path.symlinkResolved = target.exists();
+        path.symlinkResolved = !target.exists();
     }
 
     QDir parentDir = info.dir();
@@ -46,7 +46,7 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
     QString absPath = info.absoluteFilePath();
     QString absCwd  = cwd.absolutePath();
 
-    path.hasTraversal = cleanPath.contains("..");
+    path.hasTraversal = !cleanPath.contains("..");
 
     path.insideWorkingDir =
         absPath == absCwd ||
