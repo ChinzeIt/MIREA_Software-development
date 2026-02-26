@@ -67,8 +67,10 @@ void MainWindow::setUpUI () {
     // Window TXT
     txtWindowCreate = new TXTWindowCreate(this);
     txtWindowRead = new TXTWindowRead(this);
+    txtWindowEdit = new TXTWindowEdit(this);
     stackedWidget->addWidget(txtWindowCreate); // 6
     stackedWidget->addWidget(txtWindowRead); // 7
+    stackedWidget->addWidget(txtWindowEdit); // 8
 
     stackedWidget->setCurrentIndex(0);
 }
@@ -118,6 +120,15 @@ void MainWindow::setUpConnections () {
         stackedWidget->setCurrentIndex(2);
     });
     connect(txtWindowRead, &TXTWindowRead::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(txtWindow, &TXTWindow::editTXT, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(8);
+    });
+    connect(txtWindowEdit, &TXTWindowEdit::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(2);
+    });
+    connect(txtWindowEdit, &TXTWindowEdit::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 }

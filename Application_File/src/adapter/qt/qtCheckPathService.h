@@ -12,6 +12,6 @@ class QTCheckPathService: public checkPathService {
     private:
     PathValidationResult path;
     public:
-    bool checking (const std::string& rawPath) override;
+    bool checking (const std::string& rawPath, PathAccessMode mode) override;
     std::string error() override;
 };

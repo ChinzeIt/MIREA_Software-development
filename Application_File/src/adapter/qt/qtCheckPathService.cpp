@@ -4,7 +4,7 @@
 #include <QDir>
 #include <QFile>
 
-bool QTCheckPathService::checking (const std::string& rawPath) {
+bool QTCheckPathService::checking (const std::string& rawPath, PathAccessMode mode) {
     path = PathValidationResult{};
 
     QString FrawPath = QString::fromStdString(rawPath);
@@ -19,7 +19,6 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
 
     path.exists   = info.exists();
     path.isFile   = info.isFile();
-    path.readable = info.isReadable();
 
     path.hasExtension = !info.suffix().isEmpty();
 
@@ -40,8 +39,6 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
     QDir parentDir = info.dir();
     path.parentDirExists = parentDir.exists();
 
-    path.userReadable = info.permission(QFile::ReadUser);
-
     QDir cwd = QDir::current();
     QString absPath = info.absoluteFilePath();
     QString absCwd  = cwd.absolutePath();
@@ -52,6 +49,24 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
         absPath == absCwd ||
         absPath.startsWith(absCwd + QDir::separator());
 
+    switch (mode) {
+        case PathAccessMode::Read:
+            path.readable = info.isReadable();
+            path.userReadable = info.permission(QFile::ReadUser);
+            break;
+        case PathAccessMode::Write:
+            path.readable = info.isReadable();
+            path.writable = info.isWritable();
+            path.userWritable = info.permission(QFile::WriteUser);
+            break;
+        case PathAccessMode::Remove: {
+            QFileInfo parentInfo(parentDir.absolutePath());
+            path.removable =
+                parentInfo.exists() &&
+                parentInfo.permission(QFile::WriteUser);
+            break;
+        }
+    }
 
     return path.empty &&
         path.exists &&
@@ -65,7 +80,10 @@ bool QTCheckPathService::checking (const std::string& rawPath) {
         path.hasTraversal &&
         path.userReadable &&
         path.isSymlink &&
-        path.symlinkResolved;
+        path.symlinkResolved &&
+        path.writable &&
+        path.userWritable &&
+        path.removable;
 }
 
 std::string QTCheckPathService::error() {

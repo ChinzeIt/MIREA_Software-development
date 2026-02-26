@@ -46,6 +46,7 @@ class TXTWindow: public QWidget {
 #include "../adapter/qt/qtCreateFileService.h"
 #include "../adapter/qt/qtCheckPathService.h"
 #include "../adapter/qt/qtReadFileService.h"
+#include "../adapter/qt/qtEditFileService.h"
 
 class TXTWindowCreate: public QWidget {
     Q_OBJECT
@@ -118,6 +119,46 @@ class TXTWindowRead: public QWidget {
 
     QTextEdit* putPath;
     QTextEdit* textInfo;
+    QPushButton* pathButton;
+    QPushButton* uButton;
+    QPushButton* backUpButton;
+    QPushButton* backButton;
+};
+
+class TXTWindowEdit: public QWidget {
+    Q_OBJECT
+
+    public:
+    TXTWindowEdit(QWidget* parent = nullptr);
+
+    protected:
+    void showEvent(QShowEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
+
+    signals:
+    void backUp();
+    void backToMain();
+
+    private:
+    void setUpUI();
+    void setUpConnections();
+    void setHotKey();
+
+    void onPathButton();
+    void onUButton();
+    void onBackUpButton();
+    void onBackButton();
+
+    QTCheckPathService checkerPath;
+    std::unique_ptr<QTEditFileService> editTXT;
+
+    bool isValidPath();
+    QLabel* pathError;
+    void editfile();
+    void savefile();
+
+    QTextEdit* putPath;
+    QTextEdit* textEdit;
     QPushButton* pathButton;
     QPushButton* uButton;
     QPushButton* backUpButton;

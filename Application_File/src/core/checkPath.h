@@ -4,31 +4,37 @@
 #include <string_view>
 
 struct PathValidationResult {
-    bool empty=true;
-    bool exists=true;
-    bool isFile=true;
-    bool readable=true;
+    bool empty = true;
+    bool exists = true;
+    bool isFile = true;
 
-    bool hasExtension=true;
+    bool readable = true;
+    bool writable = true;
+    bool removable = true;
 
-    bool canonicalizable=true;
-    bool absolute=true;
+    bool hasExtension = true;
 
-    bool insideWorkingDir=true;
-    bool parentDirExists=true;
-    bool hasTraversal=true;
+    bool canonicalizable = true;
+    bool absolute = true;
 
-    bool userReadable=true;
+    bool insideWorkingDir = true;
+    bool parentDirExists = true;
+    bool hasTraversal = true;
 
-    bool isSymlink=true;
-    bool symlinkResolved=true;
+    bool userReadable = true;
+    bool userWritable = true;
+
+    bool isSymlink = true;
+    bool symlinkResolved = true;
 
     auto get_fields() {
-        return std::array<std::pair<std::string_view, bool*>, 13>{{
+        return std::array<std::pair<std::string_view, bool*>, 16>{{
             {"empty", &empty},
             {"exists", &exists},
             {"isFile", &isFile},
             {"readable", &readable},
+            {"writable", &writable},
+            {"removable", &removable},
             {"hasExtension", &hasExtension},
             {"canonicalizable", &canonicalizable},
             {"absolute", &absolute},
@@ -36,8 +42,15 @@ struct PathValidationResult {
             {"parentDirExists", &parentDirExists},
             {"hasTraversal", &hasTraversal},
             {"userReadable", &userReadable},
+            {"userWritable", &userWritable},
             {"isSymlink", &isSymlink},
             {"symlinkResolved", &symlinkResolved}
         }};
     }
+};
+
+enum class PathAccessMode {
+    Read,
+    Write,
+    Remove
 };

@@ -42,6 +42,7 @@ class MainWindow: public QMainWindow {
     TXTWindow* txtWindow;
     TXTWindowCreate* txtWindowCreate;
     TXTWindowRead* txtWindowRead;
+    TXTWindowEdit* txtWindowEdit;
 
     JSONWindow* jsonWindow;
 
