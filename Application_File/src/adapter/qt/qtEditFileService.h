@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../core/editFile.h"
+#include "../../core/editFileService.h"
 
 #include <QFile>
 #include <QLockFile>

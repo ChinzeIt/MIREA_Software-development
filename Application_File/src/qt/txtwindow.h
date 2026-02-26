@@ -42,11 +42,11 @@ class TXTWindow: public QWidget {
     QPushButton* backButton;
 };
 
-#include "../adapter/qt/qtCheckCreateService.h"
 #include "../adapter/qt/qtCreateFileService.h"
 #include "../adapter/qt/qtCheckPathService.h"
 #include "../adapter/qt/qtReadFileService.h"
 #include "../adapter/qt/qtEditFileService.h"
+#include "../adapter/qt/qtRemoveFileService.h"
 
 class TXTWindowCreate: public QWidget {
     Q_OBJECT
@@ -72,7 +72,7 @@ class TXTWindowCreate: public QWidget {
     void onBackUpButton();
     void onBackButton();
 
-    QTCheckCreateService checkerPath;
+    QTCheckPathService checkerPath;
     QTCreateFileService crFile;
     bool isValidPath();
     void touchFile();
@@ -160,6 +160,44 @@ class TXTWindowEdit: public QWidget {
     QTextEdit* putPath;
     QTextEdit* textEdit;
     QPushButton* pathButton;
+    QPushButton* uButton;
+    QPushButton* backUpButton;
+    QPushButton* backButton;
+};
+
+class TXTWindowRemove: public QWidget {
+    Q_OBJECT
+
+    public:
+    TXTWindowRemove(QWidget* parent = nullptr);
+
+    protected:
+    void showEvent(QShowEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
+
+    signals:
+    void backUp();
+    void backToMain();
+
+    private:
+    void setUpUI();
+    void setUpConnections();
+    void setHotKey();
+
+    void onRemoveButton();
+    void onUButton();
+    void onBackUpButton();
+    void onBackButton();
+
+    QTCheckPathService checkerPath;
+    QTRemoveFileService removeFile;
+    bool isValidPath();
+    void delFile();
+    QLabel* pathError;
+    QLabel* pathOk;
+
+    QTextEdit* putPath;
+    QPushButton* pathRemove;
     QPushButton* uButton;
     QPushButton* backUpButton;
     QPushButton* backButton;

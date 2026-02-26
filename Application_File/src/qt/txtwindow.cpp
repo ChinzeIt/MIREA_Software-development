@@ -275,10 +275,12 @@ void TXTWindowCreate::onBackButton() {
 }
 
 bool TXTWindowCreate::isValidPath() {
-    pathError->clear();
-    QString pathStr = putPath->toPlainText();  
+    QString pathStr = putPath->toPlainText();
 
-    if (checkerPath.checking(pathStr.toStdString())) {
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+
+    if (checkerPath.checking(pathStr.toStdString(), PathAccessMode::Create)) {
         qDebug() << "valid path";
         return true;
     } else {
@@ -737,5 +739,221 @@ bool TXTWindowEdit::isValidPath() {
         pathError->setText(QString::fromStdString(checkerPath.error()));
         qDebug() << "no valid path";
         return false;
+    }
+}
+
+// Remove TXT
+TXTWindowRemove::TXTWindowRemove (QWidget* parent) :
+QWidget (parent) {
+    setUpUI();
+    setUpConnections();
+    setHotKey();
+}
+
+void TXTWindowRemove::showEvent(QShowEvent* event) {
+    QWidget::showEvent(event);
+
+    putPath->setEnabled(true);
+    pathRemove->setEnabled(true);
+
+    putPath->clear();
+    putPath->show();
+
+    pathRemove->show();
+
+    pathError->hide();
+    pathOk->hide();
+
+    putPath->setFocus();
+}
+
+bool TXTWindowRemove::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == putPath && event->type() == QEvent::KeyPress) {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            putPath->clearFocus();
+            onRemoveButton();
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
+void TXTWindowRemove::setUpUI() {
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+
+    QFont fontPath;
+    fontPath.setFamily("Arial");
+    fontPath.setPointSize(36);
+    fontPath.setBold(true);
+
+    QFont font;
+    font.setFamily("Arial");
+    font.setPointSize(30);
+    font.setBold(true);
+
+    putPath = new QTextEdit(this);
+    putPath->installEventFilter(this);
+    putPath->setFont(fontPath);
+    putPath->setPlaceholderText("Enter path");
+    putPath->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    putPath->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    putPath->setFixedHeight(60);
+
+    pathRemove = new QPushButton("↵", this);
+    pathRemove->setFont(fontPath);
+    pathRemove->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    pathRemove->setFixedHeight(60);
+
+    pathError = new QLabel(this);
+    pathError->setStyleSheet("color: red;");
+    pathError->setWordWrap(true);
+
+    pathOk = new QLabel(this);
+    pathOk->setStyleSheet("color: green;");
+    pathOk->setWordWrap(true);
+    pathOk->setText("File succes remove");
+
+    QHBoxLayout* pathLayout = new QHBoxLayout();
+    pathLayout->addWidget(putPath);
+    pathLayout->addWidget(pathRemove);
+    pathLayout->setStretch(0, 3);
+    pathLayout->setStretch(1, 1);
+
+    QVBoxLayout* pathLayoutWithError = new QVBoxLayout();
+    pathLayoutWithError->addLayout(pathLayout);
+    pathLayoutWithError->addWidget(pathError);
+    pathLayoutWithError->addWidget(pathOk);
+
+    uButton = new QPushButton("↻", this);
+    backUpButton = new QPushButton("⬆", this);
+    backButton = new QPushButton("BACK", this);
+    uButton->setFont(font);
+    backUpButton->setFont(font);
+    backButton->setFont(font);
+    uButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    backUpButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    backButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    uButton->setFixedHeight(60);
+    backUpButton->setFixedHeight(60);
+    backButton->setFixedHeight(60);
+
+
+    QHBoxLayout* buttonLayout = new QHBoxLayout();
+    buttonLayout->addWidget(uButton);
+    buttonLayout->addWidget(backUpButton);
+    buttonLayout->addWidget(backButton);
+    buttonLayout->setStretch(0, 1);
+    buttonLayout->setStretch(1, 1);
+    buttonLayout->setStretch(2, 2);
+
+    mainLayout->addLayout(pathLayoutWithError);
+    mainLayout->addStretch();
+    mainLayout->addLayout(buttonLayout);
+    mainLayout->setContentsMargins(20, 20, 20, 20);
+}
+
+void TXTWindowRemove::setUpConnections() {
+    connect(pathRemove, &QPushButton::clicked, this, &TXTWindowRemove::onRemoveButton);
+    connect(uButton, &QPushButton::clicked, this, &TXTWindowRemove::onUButton);
+    connect(backUpButton, &QPushButton::clicked, this, &TXTWindowRemove::onBackUpButton);
+    connect(backButton, &QPushButton::clicked, this, &TXTWindowRemove::onBackButton);
+}
+
+void TXTWindowRemove::setHotKey() {
+    new QShortcut(QKeySequence(Qt::Key_Return), this, [this]() {
+        onRemoveButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_U), this, [this]() {
+        onUButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_B), this, [this]() {
+        onBackUpButton();
+    });
+    new QShortcut(QKeySequence(Qt::Key_Escape), this, [this]() {
+        onBackButton();
+    });
+}
+
+void TXTWindowRemove::onRemoveButton() {
+    if (isValidPath()) {
+        pathError->hide();
+        pathOk->show();
+
+        delFile();
+
+        putPath->setFocus();
+        QTextCursor cursor = putPath->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        putPath->setTextCursor(cursor);
+    } else {
+        pathOk->hide();
+        pathError->show();
+
+        putPath->setFocus();
+        QTextCursor cursor = putPath->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        putPath->setTextCursor(cursor);
+    }
+
+    qDebug() << "path button clicked";
+}
+
+void TXTWindowRemove::onUButton() {
+    putPath->clear();
+    putPath->setFocus();
+    pathError->clear();
+    pathError->hide();
+    pathOk->hide();
+
+    qDebug() << "u button clicked";
+}
+
+void TXTWindowRemove::onBackUpButton() {
+    emit backUp();
+    qDebug() << "back button clicked";
+}
+
+void TXTWindowRemove::onBackButton() {
+    emit backToMain();
+    qDebug() << "back button clicked";
+}
+
+bool TXTWindowRemove::isValidPath() {
+    QString pathStr = putPath->toPlainText();
+
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+
+    if (checkerPath.checking(pathStr.toStdString(), PathAccessMode::Remove)) {
+        qDebug() << "valid path";
+    } else {
+        pathError->setText(QString::fromStdString(checkerPath.error()));
+        qDebug() << "no valid path";
+        return false;
+    }
+
+    if (!removeFile.checkBlock(pathStr.toStdString())) {
+        pathError->setText("File have block");
+        return false;
+    }
+    return true;
+}
+
+void TXTWindowRemove::delFile() {
+    pathError->clear();
+    QString pathStr = putPath->toPlainText();
+
+    if (!pathStr.endsWith(".txt", Qt::CaseInsensitive))
+        pathStr += ".txt";
+
+    try {
+        removeFile.deleteFile(pathStr.toStdString());
+    } catch(const std::exception& e) {
+        pathOk->hide();
+        pathError->setText(e.what());
+        pathError->show();
+        return;
     }
 }

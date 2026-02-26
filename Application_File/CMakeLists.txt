@@ -10,7 +10,7 @@ set(QT_SOURCES src/qt/mainwindow.cpp src/qt/diskinfowindow.cpp src/qt/txtwindow.
 
 set(PATH_ADAPTER_QT src/adapter/qt)
 
-set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp ${PATH_ADAPTER_QT}/qtCheckCreateService.cpp ${PATH_ADAPTER_QT}/qtCheckPathService.cpp ${PATH_ADAPTER_QT}/qtCreateFileService.cpp ${PATH_ADAPTER_QT}/qtReadFileService.cpp ${PATH_ADAPTER_QT}/qtEditFileService.cpp)
+set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp ${PATH_ADAPTER_QT}/qtCheckPathService.cpp ${PATH_ADAPTER_QT}/qtCreateFileService.cpp ${PATH_ADAPTER_QT}/qtReadFileService.cpp ${PATH_ADAPTER_QT}/qtEditFileService.cpp ${PATH_ADAPTER_QT}/qtRemoveFileService.cpp)
 
 set(SOURCES src/main.cpp ${CORE_SOURCE} ${QT_SOURCES} ${ADAPTER_SOURCE_QT})
 

@@ -8,6 +8,10 @@ struct PathValidationResult {
     bool exists = true;
     bool isFile = true;
 
+    bool noFileExists=true;
+    bool validName=true; 
+    bool isSystemLink=true; 
+
     bool readable = true;
     bool writable = true;
     bool removable = true;
@@ -28,10 +32,13 @@ struct PathValidationResult {
     bool symlinkResolved = true;
 
     auto get_fields() {
-        return std::array<std::pair<std::string_view, bool*>, 16>{{
+        return std::array<std::pair<std::string_view, bool*>, 19>{{
             {"empty", &empty},
             {"exists", &exists},
             {"isFile", &isFile},
+            {"noFileExists", &noFileExists},
+            {"validName", &validName},
+            {"isSystemLink", &isSystemLink},
             {"readable", &readable},
             {"writable", &writable},
             {"removable", &removable},
@@ -50,6 +57,7 @@ struct PathValidationResult {
 };
 
 enum class PathAccessMode {
+    Create,
     Read,
     Write,
     Remove

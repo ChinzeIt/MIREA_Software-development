@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QFile>
+#include <QRegularExpression>
 
 bool QTCheckPathService::checking (const std::string& rawPath, PathAccessMode mode) {
     path = PathValidationResult{};
@@ -50,6 +51,13 @@ bool QTCheckPathService::checking (const std::string& rawPath, PathAccessMode mo
         absPath.startsWith(absCwd + QDir::separator());
 
     switch (mode) {
+        case PathAccessMode::Create: {
+            path.noFileExists = !info.exists();
+            QRegularExpression invalidChars(R"([<>:"/\\|?*\x00-\x1f])");
+            path.validName = !info.fileName().isEmpty() && !invalidChars.match(info.fileName()).hasMatch();
+            path.isSystemLink = !(rawPath == "." || rawPath == "..");
+            break;
+        }
         case PathAccessMode::Read:
             path.readable = info.isReadable();
             path.userReadable = info.permission(QFile::ReadUser);
@@ -68,22 +76,44 @@ bool QTCheckPathService::checking (const std::string& rawPath, PathAccessMode mo
         }
     }
 
-    return path.empty &&
-        path.exists &&
-        path.isFile &&
-        path.readable &&
-        path.hasExtension &&
-        path.canonicalizable &&
-        path.absolute &&
-        path.insideWorkingDir &&
-        path.parentDirExists &&
-        path.hasTraversal &&
-        path.userReadable &&
-        path.isSymlink &&
-        path.symlinkResolved &&
-        path.writable &&
-        path.userWritable &&
-        path.removable;
+    switch (mode) {
+    case PathAccessMode::Create:
+        return path.empty &&
+            path.noFileExists &&
+            path.validName &&
+            path.isSystemLink &&
+            path.hasExtension &&
+            path.parentDirExists &&
+            path.insideWorkingDir &&
+            path.hasTraversal;
+
+    case PathAccessMode::Read:
+        return path.empty &&
+            path.exists &&
+            path.isFile &&
+            path.readable &&
+            path.userReadable &&
+            path.insideWorkingDir &&
+            path.hasTraversal;
+
+    case PathAccessMode::Write:
+        return path.empty &&
+            path.exists &&
+            path.isFile &&
+            path.writable &&
+            path.userWritable &&
+            path.insideWorkingDir &&
+            path.hasTraversal;
+
+    case PathAccessMode::Remove:
+        return path.empty &&
+            path.exists &&
+            path.isFile &&
+            path.removable &&
+            path.insideWorkingDir &&
+            path.hasTraversal;
+    }
+    return false;
 }
 
 std::string QTCheckPathService::error() {
