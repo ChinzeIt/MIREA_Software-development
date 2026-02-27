@@ -10,14 +10,14 @@ set(QT_SOURCES src/qt/mainwindow.cpp src/qt/diskinfowindow.cpp src/qt/txtwindow.
 
 set(PATH_ADAPTER_QT src/adapter/qt)
 
-set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp ${PATH_ADAPTER_QT}/qtCheckPathService.cpp ${PATH_ADAPTER_QT}/qtCreateFileService.cpp ${PATH_ADAPTER_QT}/qtReadFileService.cpp ${PATH_ADAPTER_QT}/qtEditFileService.cpp ${PATH_ADAPTER_QT}/qtRemoveFileService.cpp)
+set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp ${PATH_ADAPTER_QT}/qtCheckPathService.cpp ${PATH_ADAPTER_QT}/qtCreateFileService.cpp ${PATH_ADAPTER_QT}/qtReadFileService.cpp ${PATH_ADAPTER_QT}/qtEditFileService.cpp ${PATH_ADAPTER_QT}/qtRemoveFileService.cpp ${PATH_ADAPTER_QT}/qtDeserialJsonXMLService.cpp)
 
 set(SOURCES src/main.cpp ${CORE_SOURCE} ${QT_SOURCES} ${ADAPTER_SOURCE_QT})
 
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml)
 
 add_executable(AppFile ${SOURCES})
 target_compile_options(AppFile PRIVATE -Wall -Werror -Wextra -Wreturn-type)
-target_link_libraries(AppFile PRIVATE Qt6::Core Qt6::Widgets)
+target_link_libraries(AppFile PRIVATE Qt6::Core Qt6::Widgets Qt6::Xml)

@@ -69,10 +69,18 @@ void MainWindow::setUpUI () {
     txtWindowRead = new TXTWindowRead(this);
     txtWindowEdit = new TXTWindowEdit(this);
     txtWindowRemove = new TXTWindowRemove(this);
+    jsonWindowCreate = new JSONWindowCreate(this);
+    jsonWindowRead = new JSONWindowRead(this);
+    jsonWindowEdit = new JSONWindowEdit(this);
+    jsonWindowRemove = new JSONWindowRemove(this);
     stackedWidget->addWidget(txtWindowCreate); // 6
     stackedWidget->addWidget(txtWindowRead); // 7
     stackedWidget->addWidget(txtWindowEdit); // 8
     stackedWidget->addWidget(txtWindowRemove); // 9
+    stackedWidget->addWidget(jsonWindowCreate); // 10
+    stackedWidget->addWidget(jsonWindowRead); // 11
+    stackedWidget->addWidget(jsonWindowEdit); // 12
+    stackedWidget->addWidget(jsonWindowRemove); // 13
 
     stackedWidget->setCurrentIndex(0);
 }
@@ -140,6 +148,44 @@ void MainWindow::setUpConnections () {
         stackedWidget->setCurrentIndex(2);
     });
     connect(txtWindowRemove, &TXTWindowRemove::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+
+    // Connect json lower widget
+    connect(jsonWindow, &JSONWindow::createJSON, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(10);
+    });
+    connect(jsonWindowCreate, &JSONWindowCreate::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(3);
+    });
+    connect(jsonWindowCreate, &JSONWindowCreate::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(jsonWindow, &JSONWindow::readJSON, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(11);
+    });
+    connect(jsonWindowRead, &JSONWindowRead::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(3);
+    });
+    connect(jsonWindowRead, &JSONWindowRead::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(jsonWindow, &JSONWindow::editJSON, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(12);
+    });
+    connect(jsonWindowEdit, &JSONWindowEdit::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(3);
+    });
+    connect(jsonWindowEdit, &JSONWindowEdit::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(jsonWindow, &JSONWindow::removeJSON, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(13);
+    });
+    connect(jsonWindowRemove, &JSONWindowRemove::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(3);
+    });
+    connect(jsonWindowRemove, &JSONWindowRemove::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 }
