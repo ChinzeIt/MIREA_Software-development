@@ -58,6 +58,7 @@ class MainWindow: public QMainWindow {
     XMLWindowRemove* xmlWindowRemove;
 
     ZIPWindow* zipWindow;
+    ZIPWindowCreate* zipWindowCreate;
 
     QPushButton* diskButton;
     QPushButton* txtButton;

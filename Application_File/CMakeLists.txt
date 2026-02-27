@@ -4,13 +4,19 @@ project(Application_File)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CORE_SOURCE)
+set(CORE_SOURCE src/core/STDCreateZIPService.cpp)
 
 set(QT_SOURCES src/qt/mainwindow.cpp src/qt/diskinfowindow.cpp src/qt/txtwindow.cpp src/qt/jsonwindow.cpp src/qt/xmlwindow.cpp src/qt/zipwindow.cpp)
 
 set(PATH_ADAPTER_QT src/adapter/qt)
 
-set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp ${PATH_ADAPTER_QT}/qtCheckPathService.cpp ${PATH_ADAPTER_QT}/qtCreateFileService.cpp ${PATH_ADAPTER_QT}/qtReadFileService.cpp ${PATH_ADAPTER_QT}/qtEditFileService.cpp ${PATH_ADAPTER_QT}/qtRemoveFileService.cpp ${PATH_ADAPTER_QT}/qtDeserialJsonXMLService.cpp)
+set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp 
+${PATH_ADAPTER_QT}/qtCheckPathService.cpp 
+${PATH_ADAPTER_QT}/qtCreateFileService.cpp 
+${PATH_ADAPTER_QT}/qtReadFileService.cpp 
+${PATH_ADAPTER_QT}/qtEditFileService.cpp 
+${PATH_ADAPTER_QT}/qtRemoveFileService.cpp 
+${PATH_ADAPTER_QT}/qtDeserialJsonXMLService.cpp)
 
 set(SOURCES src/main.cpp ${CORE_SOURCE} ${QT_SOURCES} ${ADAPTER_SOURCE_QT})
 
