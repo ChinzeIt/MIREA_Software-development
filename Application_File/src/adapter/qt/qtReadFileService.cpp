@@ -2,19 +2,15 @@
 
 std::string QTReadFileService::readFile (const std::string& rawPath) {
     QString QrawPath = QString::fromStdString(rawPath);
-    std::string result = "Can not open file or content have damage";
 
 #if defined(Q_OS_WIN)
     return fixWindowsRead(rawPath);
 #else
     QFile file(QrawPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return result;
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return "Can not open file or content have damage";
 
-    result.clear();
     QTextStream in(&file);
-    result = in.readAll().toStdString();
-
-    return result;
+    return in.readAll().toStdString();
 #endif
 }
 // Not tested on OS "Windows"

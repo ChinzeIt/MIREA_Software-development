@@ -31,8 +31,8 @@ struct PathValidationResult {
     bool isSymlink = true;
     bool symlinkResolved = true;
 
-    auto get_fields() {
-        return std::array<std::pair<std::string_view, bool*>, 19>{{
+    auto get_fields() const {
+        return std::array<std::pair<std::string_view, const bool*>, 19>{{
             {"empty", &empty},
             {"exists", &exists},
             {"isFile", &isFile},

@@ -9,7 +9,7 @@ enum class TypeD {
 
 class deserialJsonXMLService {
     public:
-    ~deserialJsonXMLService () = default;
+    virtual ~deserialJsonXMLService () = default;
     
     virtual void checkDes (std::string text, TypeD) = 0;
 };

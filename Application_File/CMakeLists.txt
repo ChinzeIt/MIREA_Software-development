@@ -27,3 +27,35 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml)
 add_executable(AppFile ${SOURCES})
 target_compile_options(AppFile PRIVATE -Wall -Werror -Wextra -Wreturn-type)
 target_link_libraries(AppFile PRIVATE Qt6::Core Qt6::Widgets Qt6::Xml)
+
+find_program(VALGRIND_EXECUTABLE valgrind)
+add_custom_target(
+    valgrind
+    COMMAND ${VALGRIND_EXECUTABLE}
+        --tool=memcheck
+        --leak-check=full
+        --show-leak-kinds=all
+        --track-origins=yes
+        --log-file=valgrind.log
+        $<TARGET_FILE:AppFile>
+    DEPENDS AppFile
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    VERBATIM
+)
+
+find_program(CPPCHECK_EXECUTABLE cppcheck)
+
+add_custom_target(
+    cppcheck
+    COMMAND ${CPPCHECK_EXECUTABLE}
+        --enable=all
+        --std=c++20
+        --inconclusive
+        --quiet
+        --inline-suppr
+        --suppress=missingIncludeSystem
+        --suppress=unusedFunction
+        ${CMAKE_SOURCE_DIR}/src
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    VERBATIM
+)
