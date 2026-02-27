@@ -73,6 +73,10 @@ void MainWindow::setUpUI () {
     jsonWindowRead = new JSONWindowRead(this);
     jsonWindowEdit = new JSONWindowEdit(this);
     jsonWindowRemove = new JSONWindowRemove(this);
+    xmlWindowCreate = new XMLWindowCreate(this);
+    xmlWindowRead = new XMLWindowRead(this);
+    xmlWindowEdit = new XMLWindowEdit(this);
+    xmlWindowRemove = new XMLWindowRemove(this);
     stackedWidget->addWidget(txtWindowCreate); // 6
     stackedWidget->addWidget(txtWindowRead); // 7
     stackedWidget->addWidget(txtWindowEdit); // 8
@@ -81,6 +85,10 @@ void MainWindow::setUpUI () {
     stackedWidget->addWidget(jsonWindowRead); // 11
     stackedWidget->addWidget(jsonWindowEdit); // 12
     stackedWidget->addWidget(jsonWindowRemove); // 13
+    stackedWidget->addWidget(xmlWindowCreate); // 14
+    stackedWidget->addWidget(xmlWindowRead);// 15
+    stackedWidget->addWidget(xmlWindowEdit); // 16
+    stackedWidget->addWidget(xmlWindowRemove); // 17
 
     stackedWidget->setCurrentIndex(0);
 }
@@ -186,6 +194,44 @@ void MainWindow::setUpConnections () {
         stackedWidget->setCurrentIndex(3);
     });
     connect(jsonWindowRemove, &JSONWindowRemove::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+
+    // Connect XML lower window
+    connect(xmlWindow, &XMLWindow::createXML, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(14);
+    });
+    connect(xmlWindowCreate, &XMLWindowCreate::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(4);
+    });
+    connect(xmlWindowCreate, &XMLWindowCreate::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(xmlWindow, &XMLWindow::readXML, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(15);
+    });
+    connect(xmlWindowRead, &XMLWindowRead::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(4);
+    });
+    connect(xmlWindowRead, &XMLWindowRead::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(xmlWindow, &XMLWindow::editXML, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(16);
+    });
+    connect(xmlWindowEdit, &XMLWindowEdit::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(4);
+    });
+    connect(xmlWindowEdit, &XMLWindowEdit::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(xmlWindow, &XMLWindow::removeXML, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(17);
+    });
+    connect(xmlWindowRemove, &XMLWindowRemove::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(4);
+    });
+    connect(xmlWindowRemove, &XMLWindowRemove::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 }

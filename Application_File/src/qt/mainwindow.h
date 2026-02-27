@@ -52,6 +52,10 @@ class MainWindow: public QMainWindow {
     JSONWindowRemove* jsonWindowRemove;
 
     XMLWindow* xmlWindow;
+    XMLWindowCreate* xmlWindowCreate;
+    XMLWindowRead* xmlWindowRead;
+    XMLWindowEdit* xmlWindowEdit;
+    XMLWindowRemove* xmlWindowRemove;
 
     ZIPWindow* zipWindow;
 
