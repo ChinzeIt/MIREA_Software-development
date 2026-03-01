@@ -10,6 +10,7 @@ class QTCheckPathZIPService : public CheckPathZIPService {
     private:
     PathValidationResZIP path;
     public:
+    QStringList existingEntries;
     bool checking(const std::string& rawPath, PathAccessModeZIP  mode) override;
 
     std::string error() override;

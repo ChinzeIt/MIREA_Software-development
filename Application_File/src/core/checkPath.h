@@ -31,8 +31,10 @@ struct PathValidationResult {
     bool isSymlink = true;
     bool symlinkResolved = true;
 
+    bool dirExecutable = true;
+
     auto get_fields() const {
-        return std::array<std::pair<std::string_view, const bool*>, 19>{{
+        return std::array<std::pair<std::string_view, const bool*>, 20>{{
             {"empty", &empty},
             {"exists", &exists},
             {"isFile", &isFile},
@@ -51,7 +53,8 @@ struct PathValidationResult {
             {"userReadable", &userReadable},
             {"userWritable", &userWritable},
             {"isSymlink", &isSymlink},
-            {"symlinkResolved", &symlinkResolved}
+            {"symlinkResolved", &symlinkResolved},
+            {"dirExecutable", &dirExecutable}
         }};
     }
 };

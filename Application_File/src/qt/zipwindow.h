@@ -13,6 +13,9 @@
 #include <QHeaderView>
 #include <QFontMetrics>
 #include <QTimer>
+#include <QtConcurrent>
+#include <QFutureWatcher>
+#include <QProgressBar>
 #include <QtGlobal>
 #include <QDebug>
 
@@ -54,6 +57,7 @@ class ZIPWindow: public QWidget {
 #include "../adapter/qt/qtCheckPathZIPService.h"
 #include "../adapter/qt/qtContentZIPService.h"
 #include "../core/STDCreateZIPService.h"
+#include "../adapter/qt/qtEditZIPService.h"
 
 class ZIPWindowCreate: public QWidget {
     Q_OBJECT
@@ -130,4 +134,56 @@ class ZIPWindowContent: public QWidget {
     QPushButton* uButton;
     QPushButton* backUpButton;
     QPushButton* backButton;
+};
+
+class ZIPWindowEdit: public QWidget {
+    Q_OBJECT
+
+    public:
+    ZIPWindowEdit(QWidget* parent = nullptr);
+
+    protected:
+    void showEvent(QShowEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
+
+    signals:
+    void backUp();
+    void backToMain();
+
+    private:
+    void setUpUI();
+    void setUpConnections();
+    void setHotKey();
+
+    QSet<int> selectedDelRows;
+    std::vector<std::string> selectedPaths;
+
+    void onPathButton();
+    void onUButton();
+    void onBackUpButton();
+    void onBackButton();
+    void onCompressButton();
+
+    std::unique_ptr<QTEditZIPService> editZIP;
+    QTCheckPathZIPService checkerPath;
+    QTContentZIPService con;
+
+    bool isValidPath();
+    QLabel* pathError;
+    void loadInformation();
+    void onDelCellClicked(int row, int col);
+    void onDelHeaderClicked(int logicalIndex);
+    void updateDelHeader();
+
+    QTextEdit* putPath;
+    QTextEdit* compressEdit;
+    QTableWidget* textInfo;
+    QProgressBar* progressBar;
+    QPushButton* pathButton;
+    QPushButton* compressButton;
+    QPushButton* uButton;
+    QPushButton* backUpButton;
+    QPushButton* backButton;
+    QHeaderView* header;
+    QWidget* compressWidget;
 };
