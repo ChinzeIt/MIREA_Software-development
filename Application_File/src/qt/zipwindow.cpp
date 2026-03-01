@@ -714,6 +714,14 @@ void ZIPWindowEdit::setUpUI() {
     progressBar->setStyleSheet("QProgressBar { background: transparent; border: none; }" "QProgressBar::chunk { background: rgb(0, 255, 0); }");
     progressBar->hide();
 
+    progressBarCompress = new QProgressBar(this);
+    progressBarCompress->setRange(0, 100);
+    progressBarCompress->setValue(0);
+    progressBarCompress->setFixedHeight(4);
+    progressBarCompress->setTextVisible(false);
+    progressBarCompress->setStyleSheet("QProgressBar { background: transparent; border: none; }" "QProgressBar::chunk { background: rgb(0, 255, 0); }");
+    progressBarCompress->hide();
+
     compressWidget = new QWidget(this);
     QHBoxLayout* compressLayout = new QHBoxLayout(compressWidget);
     compressLayout->setContentsMargins(0, 0, 0, 0);
@@ -764,6 +772,7 @@ void ZIPWindowEdit::setUpUI() {
     mainLayout->addWidget(textInfo);
     mainLayout->addWidget(progressBar);
     mainLayout->addWidget(compressWidget);
+    mainLayout->addWidget(progressBarCompress);
     mainLayout->addLayout(buttonLayout);
     mainLayout->setContentsMargins(20, 20, 20, 20);
 }
@@ -858,6 +867,8 @@ void ZIPWindowEdit::onBackButton() {
 }
 
 void ZIPWindowEdit::onCompressButton() {
+    QString pathStr = compressEdit->toPlainText();
+
     QStringList existing;
     for (int r = 0; r < textInfo->rowCount(); ++r) {
         auto item = textInfo->item(r, 0);
@@ -866,23 +877,51 @@ void ZIPWindowEdit::onCompressButton() {
     }
 
     checkerPath.existingEntries = existing;
-    QString pathStr = compressEdit->toPlainText();
-    if (checkerPath.checking(pathStr.toStdString(), PathAccessModeZIP::COMPRESS)) {
+
+    if (!checkerPath.checking(pathStr.toStdString(), PathAccessModeZIP::COMPRESS)) {
+        qDebug() << QString::fromStdString(checkerPath.error());
+        compressEdit->setFocus();
+        QTextCursor cursor = compressEdit->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        compressEdit->setTextCursor(cursor);
+        return;
+    }
+
+    setEnabled(false);
+    progressBarCompress->setValue(0);
+    progressBarCompress->show();
+
+    editZIP->onProgress = [this](int percent) {
+        QMetaObject::invokeMethod(this, [this, percent]() {
+            progressBarCompress->setValue(percent);
+        }, Qt::QueuedConnection);
+    };
+
+    std::string pathStd = pathStr.toStdString();
+    QFutureWatcher<void>* watcher = new QFutureWatcher<void>(this);
+
+    QFuture<void> future = QtConcurrent::run([this, pathStd]() {
         try {
-            editZIP->comFile(pathStr.toStdString());
-            compressEdit->clear();
-            loadInformation();
+            editZIP->comFile(pathStd);
         } catch (const std::exception& e) {
             qDebug() << e.what();
         }
-    } else {
-        qDebug() << QString::fromStdString(checkerPath.error());
-    }
+    });
 
-    compressEdit->setFocus();
-    QTextCursor cursor = compressEdit->textCursor();
-    cursor.movePosition(QTextCursor::End);
-    compressEdit->setTextCursor(cursor);
+    connect(watcher, &QFutureWatcher<void>::finished, this, [this, watcher]() {
+        progressBarCompress->setValue(100);
+        progressBarCompress->hide();
+        setEnabled(true);
+        compressEdit->clear();
+        loadInformation();
+        compressEdit->setFocus();
+        QTextCursor cursor = compressEdit->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        compressEdit->setTextCursor(cursor);
+        watcher->deleteLater();
+    });
+
+    watcher->setFuture(future);
 
     qDebug() << "button compress";
 }

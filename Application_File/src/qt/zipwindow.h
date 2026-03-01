@@ -179,6 +179,7 @@ class ZIPWindowEdit: public QWidget {
     QTextEdit* compressEdit;
     QTableWidget* textInfo;
     QProgressBar* progressBar;
+    QProgressBar* progressBarCompress;
     QPushButton* pathButton;
     QPushButton* compressButton;
     QPushButton* uButton;
