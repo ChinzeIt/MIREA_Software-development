@@ -1,4 +1,5 @@
 # Ignore IDEA config
+.idea/
 .qtcreator/
 .vscode/
 

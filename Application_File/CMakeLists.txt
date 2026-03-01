@@ -12,6 +12,8 @@ set(PATH_ADAPTER_QT src/adapter/qt)
 
 set(ADAPTER_SOURCE_QT ${PATH_ADAPTER_QT}/qtDiskService.cpp 
 ${PATH_ADAPTER_QT}/qtCheckPathService.cpp 
+${PATH_ADAPTER_QT}/qtCheckPathZIPService.cpp 
+${PATH_ADAPTER_QT}/qtContentZIPService.cpp 
 ${PATH_ADAPTER_QT}/qtCreateFileService.cpp 
 ${PATH_ADAPTER_QT}/qtReadFileService.cpp 
 ${PATH_ADAPTER_QT}/qtEditFileService.cpp 
@@ -25,8 +27,14 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml)
 
 add_executable(AppFile ${SOURCES})
+# For QuaZIP
+set(QUAZIP_INCLUDE_DIR /usr/local/include/QuaZip-Qt6-1.5)
+set(QUAZIP_LIB /usr/local/lib/libquazip1-qt6.so)
+target_include_directories(AppFile PRIVATE ${QUAZIP_INCLUDE_DIR})
+target_link_libraries(AppFile PRIVATE ${QUAZIP_LIB})
+
 target_compile_options(AppFile PRIVATE -Wall -Werror -Wextra -Wreturn-type)
-target_link_libraries(AppFile PRIVATE Qt6::Core Qt6::Widgets Qt6::Xml)
+target_link_libraries(AppFile PRIVATE Qt6::Core Qt6::Widgets Qt6::Xml ${QUAZIP_LIB})
 
 find_program(VALGRIND_EXECUTABLE valgrind)
 add_custom_target(

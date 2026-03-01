@@ -78,6 +78,7 @@ void MainWindow::setUpUI () {
     xmlWindowEdit = new XMLWindowEdit(this);
     xmlWindowRemove = new XMLWindowRemove(this);
     zipWindowCreate = new ZIPWindowCreate(this);
+    zipWindowContent = new ZIPWindowContent(this);
     stackedWidget->addWidget(txtWindowCreate); // 6
     stackedWidget->addWidget(txtWindowRead); // 7
     stackedWidget->addWidget(txtWindowEdit); // 8
@@ -91,6 +92,7 @@ void MainWindow::setUpUI () {
     stackedWidget->addWidget(xmlWindowEdit); // 16
     stackedWidget->addWidget(xmlWindowRemove); // 17
     stackedWidget->addWidget(zipWindowCreate); // 18
+    stackedWidget->addWidget(zipWindowContent); // 19
 
     stackedWidget->setCurrentIndex(0);
 }
@@ -245,6 +247,15 @@ void MainWindow::setUpConnections () {
         stackedWidget->setCurrentIndex(5);
     });
     connect(zipWindowCreate, &ZIPWindowCreate::backToMain, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(0);
+    });
+    connect(zipWindow, &ZIPWindow::contentZIP, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(19);
+    });
+    connect(zipWindowContent, &ZIPWindowContent::backUp, mainWidget, [this]() {
+        stackedWidget->setCurrentIndex(5);
+    });
+    connect(zipWindowContent, &ZIPWindowContent::backToMain, mainWidget, [this]() {
         stackedWidget->setCurrentIndex(0);
     });
 }

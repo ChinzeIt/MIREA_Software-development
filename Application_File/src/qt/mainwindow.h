@@ -59,6 +59,7 @@ class MainWindow: public QMainWindow {
 
     ZIPWindow* zipWindow;
     ZIPWindowCreate* zipWindowCreate;
+    ZIPWindowContent* zipWindowContent;
 
     QPushButton* diskButton;
     QPushButton* txtButton;
